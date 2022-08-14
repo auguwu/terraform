@@ -536,3 +536,10 @@ FodyWeavers.xsd
 
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
+
+.data
+config/kibana/.*
+config/elasticsearch/*.keystore
+config/elasticsearch/users
+config/elasticsearch/users_roles
+config/elasticsearch/service_tokens

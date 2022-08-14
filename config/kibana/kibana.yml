@@ -1,0 +1,27 @@
+xpack.encryptedSavedObjects.encryptionKey: "${KIBANA_ENCRYPTION_KEY}"
+xpack.reporting.kibanaServer.hostname: localhost
+xpack.reporting.encryptionKey: "${KIBANA_REPORTING_ENCRYPTION_KEY}"
+xpack.security.encryptionKey: "${KIBANA_SECURITY_ENCRYPTION_KEY}"
+
+telemetry:
+  enabled: false
+  optIn: false
+
+server:
+  name: localhost
+  port: 5601
+  host: "0.0.0.0"
+
+elasticsearch:
+  serviceAccountToken: ${KIBANA_SERVICE_TOKEN}
+
+logging:
+  appenders:
+    console:
+      type: console
+      layout:
+        type: pattern
+        highlight: true
+  root:
+    appenders: [default, console]
+    level: info

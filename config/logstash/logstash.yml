@@ -1,0 +1,7 @@
+api.auth.basic.password: ${LOGSTASH_PASSWORD}
+api.auth.basic.username: ${LOGSTASH_USERNAME}
+api.http.host: "0.0.0.0"
+api.auth.type: "basic"
+api.enabled: true
+node.name: noel-ls-node-0
+log.level: "debug"

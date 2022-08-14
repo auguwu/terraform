@@ -1,0 +1,6 @@
+xpack.security.authc.api_key.enabled: true
+xpack.monitoring.collection.enabled: true
+xpack.security.enabled: true
+network.host: 0.0.0.0
+cluster.name: noel-es-cluster
+node.name: noel-es-node
