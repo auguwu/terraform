@@ -70,43 +70,43 @@ data "docker_network" "fluff" {
 }
 
 resource "docker_image" "elasticsearch" {
-  keep_locally = true
+  keep_locally = var.keep_docker_images
   name         = "docker.elastic.co/elasticsearch/elasticsearch:8.3.3"
 }
 
 resource "docker_image" "kibana" {
-  keep_locally = true
+  keep_locally = var.keep_docker_images
   name         = "docker.elastic.co/kibana/kibana:8.3.3"
 }
 
 resource "docker_image" "logstash" {
-  keep_locally = true
+  keep_locally = var.keep_docker_images
   name         = "docker.elastic.co/logstash/logstash:8.3.3"
 }
 
 resource "docker_image" "postgresql" {
-  keep_locally = true
+  keep_locally = var.keep_docker_images
   name         = "bitnami/postgresql:14.4.0"
 }
 
 resource "docker_image" "redis" {
-  keep_locally = true
+  keep_locally = var.keep_docker_images
   name         = "bitnami/redis:7.0.4"
 }
 
 resource "docker_image" "zookeeper" {
-  keep_locally = true
+  keep_locally = var.keep_docker_images
   name         = "bitnami/zookeeper:3.7.1"
 }
 
 resource "docker_image" "kafka" {
-  keep_locally = true
+  keep_locally = var.keep_docker_images
   name         = "bitnami/kafka:3.2.1"
 }
 
 resource "docker_image" "cassandra" {
-  keep_locally = true
-  name         = "bitnami/cassandra:4.0.5"
+  keep_locally = var.keep_docker_images
+  name         = "cassandra:4.0.5"
 }
 
 resource "docker_container" "elasticsearch" {
@@ -321,7 +321,7 @@ resource "docker_container" "postgres" {
 
   volumes {
     container_path = "/bitnami/postgresql"
-    host_path = "/mnt/storage/data/.data/postgres"
+    host_path = "/var/lib/docker/volumes/postgres/_data"
   }
 
   restart = "always"
@@ -345,15 +345,16 @@ resource "docker_container" "cassandra" {
   }
 
   volumes {
-    container_path = "/bitnami/cassandra"
+    container_path = "/var/lib/cassandra"
     host_path = "/mnt/storage/data/.data/cassandra"
   }
 
   env = [
-    "CASSANDRA_USER=noel",
-    "CASSANDRA_PASSWORD=noeliscutieuwu",
-    "CASSANDRA_PASSWORD_SEEDER=yes",
-    "CASSANDRA_CLUSTER_NAME=noel-cassandra-cluster"
+    "CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch",
+    "CASSANDRA_DC=noel-us-west1",
+    "CASSANDRA_RACK=noel-cassandra-rack-0",
+    "CASSANDRA_CLUSTER_NAME=Noel Cluster",
+    "JVM_OPTS=-Xms1024m -Xmx4096m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
   ]
 
   restart = "always"
