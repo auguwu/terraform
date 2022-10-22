@@ -543,3 +543,4 @@ config/elasticsearch/*.keystore
 config/elasticsearch/users
 config/elasticsearch/users_roles
 config/elasticsearch/service_tokens
+develop/**/*.yaml
