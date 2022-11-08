@@ -139,14 +139,49 @@ resource "docker_container" "logstash" {
   name    = "logstash"
 }
 
-# resource "docker_container" "fleet_server" {
-#   networks_advanced {
-#     name = var.docker_network
-#   }
-# }
+resource "docker_container" "fleet_server" {
+  networks_advanced {
+    name = var.docker_network
+  }
 
-# resource "docker_container" "elastic_agent" {
-#   networks_advanced {
-#     name = var.docker_network
-#   }
-# }
+  ports {
+    external = 8220
+    internal = 8220
+    protocol = "tcp"
+  }
+
+  env = [
+    "FLEET_SERVER_ELASTICSEARCH_HOST=http://elasticsearch:9200",
+    "FLEET_SERVER_SERVICE_TOKEN=${local.data["fleet-server-service-token"]}",
+    "FLEET_SERVER_ENABLE=true",
+    "KIBANA_FLEET_SETUP=1",
+    "KIBANA_HOST=http://kibana:5601",
+    "FLEET_URL=https://0.0.0.0:8220",
+  ]
+
+  restart = "always"
+  image   = docker_image.elastic_agent.latest
+  name    = "fleet_server"
+}
+
+resource "docker_container" "elastic_agent" {
+  networks_advanced {
+    name = var.docker_network
+  }
+
+  # Each Elastic Agent runs APM server, so this is required to be used!
+  ports {
+    external = 8200
+    internal = 8200
+    protocol = "tcp"
+  }
+
+  env = [
+    "FLEET_ENROLLMENT_TOKEN=${local.data["elastic-agent-enrollment-token"]}",
+    "FLEET_URL=https://fleet_server:8220",
+  ]
+
+  restart = "always"
+  image   = docker_image.elastic_agent.latest
+  name    = "elastic_agent_1"
+}
