@@ -15,15 +15,6 @@ data "docker_network" "fluff" {
   name = "fluff"
 }
 
-module "cassandra" {
-  source         = "./modules/cassandra"
-  docker_network = data.docker_network.fluff.name
-
-  providers = {
-    docker = docker
-  }
-}
-
 module "clickhouse" {
   source         = "./modules/clickhouse"
   docker_network = data.docker_network.fluff.name

@@ -155,8 +155,7 @@ resource "docker_container" "fleet_server" {
     "FLEET_SERVER_SERVICE_TOKEN=${local.data["fleet-server-service-token"]}",
     "FLEET_SERVER_ENABLE=true",
     "KIBANA_FLEET_SETUP=1",
-    "KIBANA_HOST=http://kibana:5601",
-    "FLEET_URL=https://0.0.0.0:8220",
+    "KIBANA_HOST=http://kibana:5601"
   ]
 
   restart = "always"
@@ -164,7 +163,7 @@ resource "docker_container" "fleet_server" {
   name    = "fleet_server"
 }
 
-resource "docker_container" "elastic_agent" {
+resource "docker_container" "elastic_agent_1" {
   networks_advanced {
     name = var.docker_network
   }
@@ -177,8 +176,17 @@ resource "docker_container" "elastic_agent" {
   }
 
   env = [
+    "FLEET_SERVER_ELASTICSEARCH_HOST=http://elasticsearch:9200",
+    "FLEET_SERVER_SERVICE_TOKEN=${local.data["fleet-server-service-token"]}",
     "FLEET_ENROLLMENT_TOKEN=${local.data["elastic-agent-enrollment-token"]}",
+    "FLEET_INSECURE=1",
+    "FLEET_ENROLL=1",
+    "KIBANA_HOST=http://kibana:5601",
     "FLEET_URL=https://fleet_server:8220",
+  ]
+
+  depends_on = [
+    docker_container.fleet_server
   ]
 
   restart = "always"

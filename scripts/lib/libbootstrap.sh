@@ -8,18 +8,16 @@ check_if_cmds_exists() {
     exit 1
   fi
 
-  if [[ "$BOOTSTRAP_CHECKS" =~ ^(yes|true|1|si|si*)$ ]]; then
-    if ! command -v jq &> /dev/null; then
-      echo "[::terraform] ❌  \`jq\` is required for bootstrap checks, please install it and re-run this script or apply \`BOOTSTRAP_CHECKS=0\` to disable bootstrap checks."
-      exit 1
-    fi
+  if ! command -v jq &> /dev/null; then
+    echo "[::terraform] ❌  \`jq\` is required for bootstrap checks, please install it and re-run this script or apply \`BOOTSTRAP_CHECKS=0\` to disable bootstrap checks."
+    exit 1
   fi
 }
 
 check_if_fluff_network_exists() {
   if [[ "$BOOTSTRAP_CHECKS" =~ ^(yes|true|1|si|si*)$ ]]; then
-    NETWORK=$(docker network ls --format '{"name":"{{ .Name }}"}' -f 'driver=bridge' | jq --slurp | jq '.[].name | index("fluff")' | tail -n 1)
-    if [[ "$NETWORK" == "null" ]]; then
+    NETWORK=$(docker network ls --format '{"name":"{{ .Name }}"}' -f 'driver=bridge' | jq --slurp | jq '.[].name' | tr -d '"' | grep -q fluff)
+    if [[ "x$?" != "x0" ]]; then
       echo "[::terraform] 🌱  Missing \`fluff\` network! Creating..."
       ID=$(docker network create fluff --driver=bridge)
 
